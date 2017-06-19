@@ -27,15 +27,7 @@ extension AutoEquatableEnum where Self: Equatable {
             return lhs._isEqual(to: rhs)
         }
 
-        let lhsMirror = Mirror(reflecting: lhs)
-        let rhsMirror = Mirror(reflecting: rhs)
-
-        let lhsProperties = lhsMirror.children.map{$0.1}
-        let rhsProperties = rhsMirror.children.map{$0.1}
-
-        let zippedProperties = zip(lhsProperties, rhsProperties)
-
-        for (lhsProperty, rhsProperty) in zippedProperties {
+        for (lhsProperty, rhsProperty) in zippedChildren(lhs: lhs, rhs: rhs) {
             if !isPropertyEqual(lhsProperty: lhsProperty, rhsProperty: rhsProperty) {
                 return false
             }
@@ -52,18 +44,14 @@ public protocol AutoEquatable: Equatable, _InternalAutoEquatable {}
 extension AutoEquatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         let lhsMirror = Mirror(reflecting: lhs)
-        let rhsMirror = Mirror(reflecting: rhs)
 
         if lhsMirror.displayStyle == .enum {
             fatalError("Enums are NOT allowed to conform to AutoEquatable. <\(Self.self)> should conform to AutoEquatableEnum instead.")
         }
 
-        let lhsProperties = lhsMirror.children.map{$0.1}
-        let rhsProperties = rhsMirror.children.map{$0.1}
+        let rhsMirror = Mirror(reflecting: rhs)
 
-        let zippedProperties = zip(lhsProperties, rhsProperties)
-
-        for (lhsProperty, rhsProperty) in zippedProperties {
+        for (lhsProperty, rhsProperty) in zippedChildren(lhsMirror: lhsMirror, rhsMirror: rhsMirror) {
             if !isPropertyEqual(lhsProperty: lhsProperty, rhsProperty: rhsProperty) {
                 return false
             }
@@ -107,12 +95,7 @@ private func isNonInternalAutoEquatableEqual(lhs: Any, rhs: Any) -> Bool {
     // Tuple Check
 
     if lhsMirror.displayStyle == .tuple && rhsMirror.displayStyle == .tuple {
-        let lhsProperties = lhsMirror.children.map{$0.1}
-        let rhsProperties = rhsMirror.children.map{$0.1}
-
-        let zippedProperties = zip(lhsProperties, rhsProperties)
-
-        for (lhsProperty, rhsProperty) in zippedProperties {
+        for (lhsProperty, rhsProperty) in zippedChildren(lhsMirror: lhsMirror, rhsMirror: rhsMirror) {
             guard let lhsProperty = lhsProperty as? _InternalAutoEquatable, let rhsProperty = rhsProperty as? _InternalAutoEquatable else {
                 fatalError("I only know how to deal with internal auto equatable")
             }
@@ -139,6 +122,20 @@ private func isNonInternalAutoEquatableEqual(lhs: Any, rhs: Any) -> Bool {
     }
 
     fatalError("type \(type(of: lhs)) must conform to AutoEquatable")
+}
+
+private func zippedChildren(lhs: Any, rhs: Any) -> Zip2Sequence<[Any], [Any]> {
+    let lhsProperties = Mirror(reflecting: lhs).children.map{$0.1}
+    let rhsProperties = Mirror(reflecting: rhs).children.map{$0.1}
+
+    return zip(lhsProperties, rhsProperties)
+}
+
+private func zippedChildren(lhsMirror: Mirror, rhsMirror: Mirror) -> Zip2Sequence<[Any], [Any]> {
+    let lhsProperties = lhsMirror.children.map{$0.1}
+    let rhsProperties = rhsMirror.children.map{$0.1}
+
+    return zip(lhsProperties, rhsProperties)
 }
 
 private func isAFunction(value: Any) -> Bool {

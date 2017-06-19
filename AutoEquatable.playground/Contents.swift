@@ -180,7 +180,7 @@ describe("AutoEquatable") {
     describe("properties that are enums") {
         describe("generic enums") {
             context("when the enums are the same") {
-                it("should return true") {
+                it("should return true for the same enum") {
                     let myClass1 = MyClassWithGenericEnum(myEnum: .one)
                     let myClass2 = MyClassWithGenericEnum(myEnum: .one)
 
@@ -316,69 +316,85 @@ describe("AutoEquatable") {
     }
 
     describe("properties that are optional") {
-        it("should return true for two nils") {
-            let myClass1: MyClassWithOptional = MyClassWithOptional(myOptional: nil)
-            let myClass2: MyClassWithOptional = MyClassWithOptional(myOptional: nil)
+        context("when both are nil") {
+            it("should return true") {
+                let myClass1: MyClassWithOptional = MyClassWithOptional(myOptional: nil)
+                let myClass2: MyClassWithOptional = MyClassWithOptional(myOptional: nil)
 
-            expect(myClass1 == myClass2).to(beTrue())
+                expect(myClass1 == myClass2).to(beTrue())
+            }
         }
 
-        it("should return false for nil and non-nil comparision") {
-            let myClass1: MyClassWithOptional = MyClassWithOptional(myOptional: nil)
-            let myClass2: MyClassWithOptional = MyClassWithOptional(myOptional: "")
+        context("when one is nil and one is non-nil") {
+            it("should return false") {
+                let myClass1: MyClassWithOptional = MyClassWithOptional(myOptional: nil)
+                let myClass2: MyClassWithOptional = MyClassWithOptional(myOptional: "")
 
-            expect(myClass1 == myClass2).to(beFalse())
-            expect(myClass2 == myClass1).to(beFalse())
+                expect(myClass1 == myClass2).to(beFalse())
+                expect(myClass2 == myClass1).to(beFalse())
+            }
         }
 
-        it("should return true for two non-nils of equal value") {
-            let myClass1: MyClassWithOptional = MyClassWithOptional(myOptional: "blah")
-            let myClass2: MyClassWithOptional = MyClassWithOptional(myOptional: "blah")
+        context("when both are non-nil and equal value") {
+            it("should return true for two non-nils of equal value") {
+                let myClass1: MyClassWithOptional = MyClassWithOptional(myOptional: "blah")
+                let myClass2: MyClassWithOptional = MyClassWithOptional(myOptional: "blah")
 
-            expect(myClass1 == myClass2).to(beTrue())
+                expect(myClass1 == myClass2).to(beTrue())
+            }
         }
 
-        it("should return false for two non-nils of different value") {
-            let myClass1: MyClassWithOptional = MyClassWithOptional(myOptional: "blah")
-            let myClass2: MyClassWithOptional = MyClassWithOptional(myOptional: "not blah")
+        context("when both are non-nil and NOT equal value") {
+            it("should return false for two non-nils of different value") {
+                let myClass1: MyClassWithOptional = MyClassWithOptional(myOptional: "blah")
+                let myClass2: MyClassWithOptional = MyClassWithOptional(myOptional: "not blah")
 
-            expect(myClass1 == myClass2).to(beFalse())
+                expect(myClass1 == myClass2).to(beFalse())
+            }
         }
     }
 
     describe("optional") {
-        it("should return true for two nils of the same type") {
-            let myClass1: MyClass? = nil
-            let myClass2: MyClass? = nil
+        context("when both are nil") {
+            it("should return true") {
+                let myClass1: MyClass? = nil
+                let myClass2: MyClass? = nil
 
-            expect(myClass1 == myClass2).to(beTrue())
+                expect(myClass1 == myClass2).to(beTrue())
+            }
         }
 
-        it("should return false for nil and non-nil comparison") {
-            let myClass1: MyClass? = nil
-            let myClass2: MyClass? = MyClass(myString: "", myInt: 0)
+        context("when one is nil and one is non-nil") {
+            it("should return false") {
+                let myClass1: MyClass? = nil
+                let myClass2: MyClass? = MyClass(myString: "", myInt: 0)
 
-            expect(myClass1 == myClass2).to(beFalse())
-            expect(myClass2 == myClass1).to(beFalse())
+                expect(myClass1 == myClass2).to(beFalse())
+                expect(myClass2 == myClass1).to(beFalse())
+            }
         }
 
-        it("should return true for two non-nil with the same property values") {
-            let myClass1: MyClass? = MyClass(myString: "one", myInt: 10)
-            let myClass2: MyClass? = MyClass(myString: "one", myInt: 10)
+        context("when both are non-nil and have same properties") {
+            it("should return true") {
+                let myClass1: MyClass? = MyClass(myString: "one", myInt: 10)
+                let myClass2: MyClass? = MyClass(myString: "one", myInt: 10)
 
-            expect(myClass1 == myClass2).to(beTrue())
+                expect(myClass1 == myClass2).to(beTrue())
+            }
         }
 
-        it("should return false for two non-nil with different property values") {
-            let myClass1: MyClass? = MyClass(myString: "one", myInt: 10)
-            let myClass2: MyClass? = MyClass(myString: "two", myInt: 5)
+        context("when both are non-nil and have different properties") {
+            it("should return false") {
+                let myClass1: MyClass? = MyClass(myString: "one", myInt: 10)
+                let myClass2: MyClass? = MyClass(myString: "two", myInt: 5)
 
-            expect(myClass1 == myClass2).to(beFalse())
+                expect(myClass1 == myClass2).to(beFalse())
+            }
         }
     }
 
     describe("overriding `==()` operation") {
-        it("should use custom function for Equatable") {
+        it("should always use custom function for Equatable") {
             let myClass1 = MyClassWithCustomEquatable(usedToDetermineEquatable: "same", doesNotMatterForEquatable: "doesn't matter")
             let myClass2 = MyClassWithCustomEquatable(usedToDetermineEquatable: "same", doesNotMatterForEquatable: "still doesn't matter")
             let myClass3 = MyClassWithCustomEquatable(usedToDetermineEquatable: "different", doesNotMatterForEquatable: "still doesn't matter")
