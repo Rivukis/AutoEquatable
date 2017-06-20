@@ -63,13 +63,13 @@ struct AStruct: AutoEquatable {
 
 ## Conforming to AutoEquatableEnum
 
-Enums are not allowed to conform to AutoEquatable and doing so will result in a fatal error. This is because enums aren't as friendly as the other object types. Instead use AutoEquatableEnum and use `areAssociatedValuesEqual()` to compare all associated values at once.
+Enums are not allowed to conform to `AutoEquatable` and doing so will result in a fatal error. This is because enums aren't as friendly as the other object types. Instead use `AutoEquatableEnum` and use `areAssociatedValuesEqual()` to compare all associated values at once.
 
 ### Enums without associated values
 
-An enum that does not have any associated value on any case conform to Equatable by default. Thanks Swift!
+An enum that does not have any associated value on any case conform to `Equatable` by default. Thanks Swift!
 
-In this case, simply conform to AutoEquatableEnum.
+In this case, simply conform to `AutoEquatableEnum`.
 
 ```swift
 enum GenericEnum: AutoEquatableEnum {
@@ -80,7 +80,7 @@ enum GenericEnum: AutoEquatableEnum {
 
 ### Enums with associated values
 
-Unfortunately, if at least one case has at least one associated value then you must conform to Equatable manually.
+Unfortunately, if at least one case has at least one associated value then you must conform to `Equatable` manually.
 
 For this to work, a little bit of boilerplate code required. Fortunately, there is a function on `AutoEquatableEnum` that can conpare all the associated values at once.
 
@@ -122,11 +122,11 @@ enum EnumWithAssociatedValue: AutoEquatableEnum {
 
 ## Optionals
 
-There is no need to have Optional conform to AutoEquatable and doing so will result in a fatal error. This is because optionals are already handled by AutoEquatable and allowing it will cause side effects.
+There is no need to have Optional conform to `AutoEquatable` and doing so will result in a fatal error. This is because optionals are already handled by `AutoEquatable` and allowing it will cause side effects.
 
 ## Tests
 
-To see and run the tests for AutoEquatable. Download the playground and run it. The tests are written using [Deft](https://github.com/Rivukis/Deft).
+To see and run the tests for `AutoEquatable`. Download the playground and run it. The tests are written using [Deft](https://github.com/Rivukis/Deft).
 
 ## Requirements
 
