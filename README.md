@@ -84,10 +84,10 @@ enum GenericEnum: AutoEquatableEnum {
 
 Unfortunately, if at least one case has at least one associated value then you must conform to `Equatable` manually.
 
-For this to work, a little bit of boilerplate code required. Fortunately, there is a function on `AutoEquatableEnum` that can conpare all the associated values at once.
+For this to work, a little bit of boilerplate code required. Fortunately, there is a function on `AutoEquatableEnum` that can compare all the associated values at once.
 
 ```swift
-// without using `default` (for compiler help so there is no way to accidently leave out a case out of the switch statement)
+// without using `default` (for compiler help so there is no way to accidentally leave out a case out of the switch statement)
 enum EnumWithAssociatedValue: AutoEquatableEnum {
     case three(String)
     case four(String, Int, Double)
