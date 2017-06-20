@@ -1,9 +1,4 @@
 
-// MARK: - Test Helper Types
-
-extension String: AutoEquatable {}
-extension Int: AutoEquatable {}
-
 // This should fatal error saying that optional should not conform to AutoEquatable
 //extension Optional: AutoEquatable {}
 

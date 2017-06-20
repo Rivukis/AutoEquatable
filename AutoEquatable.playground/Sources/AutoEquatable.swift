@@ -141,3 +141,13 @@ private func zippedChildren(lhsMirror: Mirror, rhsMirror: Mirror) -> Zip2Sequenc
 private func isAFunction(value: Any) -> Bool {
     return String(describing: value) == "(Function)"
 }
+
+// MARK: Common Types Conforming to AutoEquatable
+
+extension String: AutoEquatable {}
+extension Int: AutoEquatable {}
+extension Double: AutoEquatable {}
+extension Float: AutoEquatable {}
+extension Array: AutoEquatable {}
+extension Dictionary: AutoEquatable {}
+extension Set: AutoEquatable {}
