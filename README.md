@@ -4,7 +4,9 @@
 [![License](https://img.shields.io/cocoapods/l/AutoEquatable.svg?style=flat)](http://cocoapods.org/pods/AutoEquatable)
 [![Platform](https://img.shields.io/cocoapods/p/AutoEquatable.svg?style=flat)](http://cocoapods.org/pods/AutoEquatable)
 
-AutoEquatable is a convenient way to conform to the Swift protocol, Equatable. AutoEquatable works by comparing all stored properties of an object.
+AutoEquatable is a convenient way to conform to the Swift protocol, Equatable.
+
+The `AutoEquatable` protocol works by comparing all stored properties of an object. Can still implement a custom `==()` function and `AutoEquatable` will use that custom implementation instead of `AutoEquatable`'s default property comparison.
 
 ## Conforming to AutoEquatable
 
