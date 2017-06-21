@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'AutoEquatable'
-  s.version          = '1.1'
+  s.version          = '1.1.1'
   s.summary          = 'Convenient protocol that allows all types to easily and safely conform to Equatable.'
 
   s.description      = <<-DESC
@@ -12,6 +12,6 @@ Pod::Spec.new do |s|
   s.author           = { 'Brian Radebaugh' => 'Rivukis@gmail.com' }
   s.source           = { :git => 'https://github.com/Rivukis/AutoEquatable.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '9.0'
   s.source_files = 'AutoEquatable.playground/Sources/AutoEquatable.swift'
 end
