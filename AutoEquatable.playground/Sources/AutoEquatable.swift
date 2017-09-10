@@ -27,13 +27,10 @@ extension AutoEquatableEnum where Self: Equatable {
             return lhs._isEqual(to: rhs)
         }
 
-        for (lhsProperty, rhsProperty) in zippedChildren(lhs: lhs, rhs: rhs) {
-            if !isPropertyEqual(lhsProperty: lhsProperty, rhsProperty: rhsProperty) {
-                return false
-            }
-        }
+        let lhsMirror = Mirror(reflecting: lhs)
+        let rhsMirror = Mirror(reflecting: rhs)
 
-        return true
+        return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
     }
 }
 
@@ -51,17 +48,11 @@ extension AutoEquatable {
 
         let rhsMirror = Mirror(reflecting: rhs)
 
-        for (lhsProperty, rhsProperty) in zippedChildren(lhsMirror: lhsMirror, rhsMirror: rhsMirror) {
-            if !isPropertyEqual(lhsProperty: lhsProperty, rhsProperty: rhsProperty) {
-                return false
-            }
-        }
-
-        return true
+        return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
     }
 }
 
-// MARK: OptionalType
+// MARK: OptionalType Protection
 
 public protocol OptionalType {}
 extension Optional: OptionalType {}
@@ -72,7 +63,28 @@ extension AutoEquatable where Self: OptionalType {
     }
 }
 
+// MARK: Collection Protection
+
+extension AutoEquatable where Self: Collection {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        fatalError("Collections (aka \(typeNameWithOutGenerics(Self.self))) should NOT conform to AutoEquatable.")
+    }
+}
+
 // MARK: - Private Helpers
+
+private func areChildrenEqual(lhsMirror: Mirror, rhsMirror: Mirror) -> Bool {
+    let lhsProperties = lhsMirror.children.map { $0.1 }
+    let rhsProperties = rhsMirror.children.map { $0.1 }
+
+    for (lhsProperty, rhsProperty) in zip(lhsProperties, rhsProperties) {
+        if !isPropertyEqual(lhsProperty: lhsProperty, rhsProperty: rhsProperty) {
+            return false
+        }
+    }
+
+    return true
+}
 
 private func isPropertyEqual(lhsProperty: Any, rhsProperty: Any) -> Bool {
     if let lhsProperty = lhsProperty as? _InternalAutoEquatable, let rhsProperty = rhsProperty as? _InternalAutoEquatable {
@@ -83,6 +95,7 @@ private func isPropertyEqual(lhsProperty: Any, rhsProperty: Any) -> Bool {
 }
 
 private func isNonInternalAutoEquatableEqual(lhs: Any, rhs: Any) -> Bool {
+
     // Function Check
 
     if isAFunction(value: lhs) && isAFunction(value: rhs) {
@@ -95,17 +108,19 @@ private func isNonInternalAutoEquatableEqual(lhs: Any, rhs: Any) -> Bool {
     // Tuple Check
 
     if lhsMirror.displayStyle == .tuple && rhsMirror.displayStyle == .tuple {
-        for (lhsProperty, rhsProperty) in zippedChildren(lhsMirror: lhsMirror, rhsMirror: rhsMirror) {
-            guard let lhsProperty = lhsProperty as? _InternalAutoEquatable, let rhsProperty = rhsProperty as? _InternalAutoEquatable else {
-                fatalError("I only know how to deal with internal auto equatable")
-            }
+        return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
+    }
 
-            if !lhsProperty._isEqual(to: rhsProperty) {
-                return false
-            }
-        }
+    // Collection Check
 
-        return true
+    if lhsMirror.displayStyle == .collection && rhsMirror.displayStyle == .collection {
+        return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
+    }
+
+    // Dictionary Check
+
+    if lhsMirror.displayStyle == .dictionary && rhsMirror.displayStyle == .dictionary {
+        return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
     }
 
     // Optional Check
@@ -124,22 +139,18 @@ private func isNonInternalAutoEquatableEqual(lhs: Any, rhs: Any) -> Bool {
     fatalError("type \(type(of: lhs)) must conform to AutoEquatable")
 }
 
-private func zippedChildren(lhs: Any, rhs: Any) -> Zip2Sequence<[Any], [Any]> {
-    let lhsProperties = Mirror(reflecting: lhs).children.map{$0.1}
-    let rhsProperties = Mirror(reflecting: rhs).children.map{$0.1}
-
-    return zip(lhsProperties, rhsProperties)
-}
-
-private func zippedChildren(lhsMirror: Mirror, rhsMirror: Mirror) -> Zip2Sequence<[Any], [Any]> {
-    let lhsProperties = lhsMirror.children.map{$0.1}
-    let rhsProperties = rhsMirror.children.map{$0.1}
-
-    return zip(lhsProperties, rhsProperties)
-}
-
 private func isAFunction(value: Any) -> Bool {
     return String(describing: value) == "(Function)"
+}
+
+private func typeNameWithOutGenerics<T>(_: T.Type) -> String {
+    let type = String(describing: T.self)
+
+    if let typeWithoutGeneric = type.characters.split(separator: "<").first {
+        return String(typeWithoutGeneric)
+    }
+
+    return type
 }
 
 // MARK: Common Types Conforming to AutoEquatable
@@ -148,6 +159,4 @@ extension String: AutoEquatable {}
 extension Int: AutoEquatable {}
 extension Double: AutoEquatable {}
 extension Float: AutoEquatable {}
-extension Array: AutoEquatable {}
-extension Dictionary: AutoEquatable {}
 extension Set: AutoEquatable {}

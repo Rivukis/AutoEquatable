@@ -28,6 +28,22 @@ class MyClassWithTuple: AutoEquatable {
     }
 }
 
+class MyClassWithArray<T>: AutoEquatable {
+    let myArray: [T]
+
+    init(myArray: [T]) {
+        self.myArray = myArray
+    }
+}
+
+class MyClassWithDictionary<T>: AutoEquatable {
+    let myDictionary: [String: T]
+
+    init(myDictionary: [String: T]) {
+        self.myDictionary = myDictionary
+    }
+}
+
 class MyClassWithFunction: AutoEquatable {
     let myFunction: () -> Bool
 
@@ -237,6 +253,64 @@ describe("AutoEquatable") {
 
                     expect(myClass1 == myClass2).to(beFalse())
                 }
+            }
+        }
+    }
+
+    describe("properties that are collections") {
+        context("when the arrays are equal") {
+            it("should return true") {
+                let myClassWithArray1 = MyClassWithArray(myArray: [1, 2, 3])
+                let myClassWithArray2 = MyClassWithArray(myArray: [1, 2, 3])
+
+                expect(myClassWithArray1 == myClassWithArray2).to(beTrue())
+            }
+        }
+
+        context("when the arrays are NOT equal") {
+            it("should return false") {
+                let myClassWithArray1 = MyClassWithArray(myArray: [-1, -2, -3])
+                let myClassWithArray2 = MyClassWithArray(myArray: [1, 2, 3])
+
+                expect(myClassWithArray1 == myClassWithArray2).to(beFalse())
+            }
+        }
+
+        context("when the arrays contain tuples of AutoEquatable") {
+            it("should be able to compare them") {
+                let myClassWithArray1 = MyClassWithArray(myArray: [(-1, -1), (-2, -2)])
+                let myClassWithArray2 = MyClassWithArray(myArray: [(-1, -1), (2, 2)])
+
+                expect(myClassWithArray1 == myClassWithArray2).to(beFalse())
+            }
+        }
+    }
+
+    describe("properties that are dictionaries") {
+        context("when the dictionaries are equal") {
+            it("should return true") {
+                let myClassWithDictionary1 = MyClassWithDictionary(myDictionary: ["one": "1", "two": "2"])
+                let myClassWithDictionary2 = MyClassWithDictionary(myDictionary: ["one": "1", "two": "2"])
+
+                expect(myClassWithDictionary1 == myClassWithDictionary2).to(beTrue())
+            }
+        }
+
+        context("when the dictionaries are NOT equal") {
+            it("should return false") {
+                let myClassWithDictionary1 = MyClassWithDictionary(myDictionary: ["one": "1", "two": "2"])
+                let myClassWithDictionary2 = MyClassWithDictionary(myDictionary: ["one": "1", "three": "3"])
+
+                expect(myClassWithDictionary1 == myClassWithDictionary2).to(beFalse())
+            }
+        }
+
+        context("when the arrays contain tuples of AutoEquatable") {
+            it("should be able to compare them") {
+                let myClassWithDictionary1 = MyClassWithDictionary(myDictionary: ["one": (-1, -1), "two": (-2, -2)])
+                let myClassWithDictionary2 = MyClassWithDictionary(myDictionary: ["one": (1, 1), "two": (2, 2)])
+
+                expect(myClassWithDictionary1 == myClassWithDictionary2).to(beFalse())
             }
         }
     }
