@@ -15,9 +15,13 @@ extension _InternalAutoEquatable where Self: Equatable {
     }
 }
 
+// MARK: - AutoEquatableGeneric
+
+public protocol AutoEquatableGeneric: _InternalAutoEquatable {}
+
 // MARK: - AutoEquatabeEnum
 
-public protocol AutoEquatableEnum: Equatable, _InternalAutoEquatable {
+public protocol AutoEquatableEnum: Equatable, AutoEquatableGeneric {
     static func areAssociatedValuesEqual(_ lhs: Any, _ rhs: Any) -> Bool
 }
 
@@ -36,7 +40,7 @@ extension AutoEquatableEnum where Self: Equatable {
 
 // MARK: - AutoEquatabeEnum
 
-public protocol AutoEquatable: Equatable, _InternalAutoEquatable {}
+public protocol AutoEquatable: Equatable, AutoEquatableGeneric {}
 
 extension AutoEquatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {

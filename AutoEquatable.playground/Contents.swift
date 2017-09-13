@@ -473,4 +473,20 @@ describe("AutoEquatable") {
         }
         _ = "" // this line is here so code collapsing works properly
     }
+
+    describe("AutoEquatableGeneric") {
+        let autoEquatableGenericFunction: (AutoEquatableGeneric) -> Void = { _ in }
+
+        context("when the instance is AutoEquatableEnum") {
+            it("should be able to pass in an AutoEquatableEnum") {
+                autoEquatableGenericFunction(GenericEnum.one)
+            }
+        }
+
+        context("when the instance is AutoEquatable") {
+            it("should be able to pass in an AutoEquatable") {
+                autoEquatableGenericFunction(MyClass(myString: "", myInt: 0))
+            }
+        }
+    }
 }
