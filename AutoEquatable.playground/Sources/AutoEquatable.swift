@@ -25,7 +25,7 @@ public protocol AutoEquatableEnum: Equatable, AutoEquatableGeneric {
     static func areAssociatedValuesEqual(_ lhs: Any, _ rhs: Any) -> Bool
 }
 
-extension AutoEquatableEnum where Self: Equatable {
+extension AutoEquatableEnum {
     public static func areAssociatedValuesEqual(_ lhs: Any, _ rhs: Any) -> Bool {
         if let lhs = lhs as? _InternalAutoEquatable, let rhs = rhs as? _InternalAutoEquatable {
             return lhs._isEqual(to: rhs)
@@ -150,7 +150,7 @@ private func isAFunction(value: Any) -> Bool {
 private func typeNameWithOutGenerics<T>(_: T.Type) -> String {
     let type = String(describing: T.self)
 
-    if let typeWithoutGeneric = type.characters.split(separator: "<").first {
+    if let typeWithoutGeneric = type.split(separator: "<").first {
         return String(typeWithoutGeneric)
     }
 
