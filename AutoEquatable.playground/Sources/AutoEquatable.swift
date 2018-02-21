@@ -163,4 +163,5 @@ extension String: AutoEquatable {}
 extension Int: AutoEquatable {}
 extension Double: AutoEquatable {}
 extension Float: AutoEquatable {}
+extension Bool: AutoEquatable {}
 extension Set: AutoEquatable {}
