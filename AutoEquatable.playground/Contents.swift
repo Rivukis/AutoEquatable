@@ -185,7 +185,6 @@ describe("AutoEquatable") {
 
             expect(myClass1 == myClass2).to(beTrue())
         }
-        _ = "" // this line is here so code collapsing works properly
     }
 
     describe("properties that are enums") {
@@ -471,7 +470,6 @@ describe("AutoEquatable") {
             expect(myClass1 == myClass2).to(beTrue())
             expect(myClass2 == myClass3).to(beFalse())
         }
-        _ = "" // this line is here so code collapsing works properly
     }
 
     describe("AutoEquatableGeneric") {
