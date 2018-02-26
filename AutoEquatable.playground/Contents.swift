@@ -146,7 +146,7 @@ describe("AutoEquatable") {
         }
 
         context("when the properties are NOT equal") {
-            it("should return true") {
+            it("should return false") {
                 let myClass1 = MyClass(myString: "yes", myInt: 5)
                 let myClass2 = MyClass(myString: "no", myInt: 10)
 
@@ -166,7 +166,7 @@ describe("AutoEquatable") {
         }
 
         context("when the properties are NOT equal") {
-            it("should return true") {
+            it("should return false") {
                 let myClass1 = MyClassWithAnotherClass(myClass: MyClass(myString: "yes", myInt: 5))
                 let myClass2 = MyClassWithAnotherClass(myClass: MyClass(myString: "no", myInt: 10))
 
@@ -186,7 +186,7 @@ describe("AutoEquatable") {
         }
 
         context("when the properties are NOT equal") {
-            it("should return true") {
+            it("should return false") {
                 let myClass1 = MyClassWithTuple(myTuple: ("one", "two"))
                 let myClass2 = MyClassWithTuple(myTuple: ("three", "four"))
 
@@ -237,7 +237,7 @@ describe("AutoEquatable") {
             }
 
             context("when the enums are NOT the same") {
-                it("should return true") {
+                it("should return false") {
                     let myClass1 = MyClassWithGenericEnum(myEnum: .one)
                     let myClass2 = MyClassWithGenericEnum(myEnum: .two)
 
@@ -266,7 +266,7 @@ describe("AutoEquatable") {
             }
 
             context("when the enums are the same with different associated values (multiple)") {
-                it("should return true when using convienence function") {
+                it("should return false when using convienence function") {
                     let myClass1 = MyClassWithEnumWithAssociatedValue(myEnum: .dos("2", 6))
                     let myClass2 = MyClassWithEnumWithAssociatedValue(myEnum: .dos("1", 5))
 
@@ -284,7 +284,7 @@ describe("AutoEquatable") {
             }
 
             context("when the enums are NOT the same") {
-                it("should return true") {
+                it("should return false") {
                     let myClass1 = MyClassWithEnumWithAssociatedValue(myEnum: .uno(""))
                     let myClass2 = MyClassWithEnumWithAssociatedValue(myEnum: .dos("", 0))
 
@@ -313,8 +313,17 @@ describe("AutoEquatable") {
             }
         }
 
-        context("when the arrays contain tuples of AutoEquatable") {
-            it("should be able to compare them") {
+        context("when the arrays contain tuples of AutoEquatable; arrays are equal") {
+            it("should return true") {
+                let myClassWithArray3 = MyClassWithArray(myArray: [(-1, -1), (-2, -2)])
+                let myClassWithArray4 = MyClassWithArray(myArray: [(-1, -1), (-2, -2)])
+
+                expect(myClassWithArray3 == myClassWithArray4).to(beTrue())
+            }
+        }
+
+        context("when the arrays contain tuples of AutoEquatable; arrays are NOT equal") {
+            it("should return false") {
                 let myClassWithArray1 = MyClassWithArray(myArray: [(-1, -1), (-2, -2)])
                 let myClassWithArray2 = MyClassWithArray(myArray: [(-1, -1), (2, 2)])
 
@@ -342,12 +351,21 @@ describe("AutoEquatable") {
             }
         }
 
-        context("when the arrays contain tuples of AutoEquatable") {
-            it("should be able to compare them") {
+        context("when the arrays contain tuples of AutoEquatable; dictionaries are equal") {
+            it("should return true") {
                 let myClassWithDictionary1 = MyClassWithDictionary(myDictionary: ["one": (-1, -1), "two": (-2, -2)])
-                let myClassWithDictionary2 = MyClassWithDictionary(myDictionary: ["one": (1, 1), "two": (2, 2)])
+                let myClassWithDictionary2 = MyClassWithDictionary(myDictionary: ["one": (-1, -1), "two": (-2, -2)])
 
-                expect(myClassWithDictionary1 == myClassWithDictionary2).to(beFalse())
+                expect(myClassWithDictionary1 == myClassWithDictionary2).to(beTrue())
+            }
+        }
+
+        context("when the arrays contain tuples of AutoEquatable; dictionaries are NOT equal") {
+            it("should return false") {
+                let myClassWithDictionary3 = MyClassWithDictionary(myDictionary: ["one": (-1, -1), "two": (-2, -2)])
+                let myClassWithDictionary4 = MyClassWithDictionary(myDictionary: ["one": (1, 1), "two": (2, 2)])
+
+                expect(myClassWithDictionary3 == myClassWithDictionary4).to(beFalse())
             }
         }
     }
@@ -364,7 +382,7 @@ describe("AutoEquatable") {
             }
 
             context("when the enums are NOT the same") {
-                it("should return true") {
+                it("should return false") {
                     let myEnum1 = GenericEnum.one
                     let myEnum2 = GenericEnum.two
 
@@ -393,7 +411,7 @@ describe("AutoEquatable") {
             }
 
             context("when the enums are the same with different associated values (multiple)") {
-                it("should return true when using convienence function") {
+                it("should return false when using convienence function") {
                     let myClass1 = EnumWithAssociatedValue.dos("2", 6)
                     let myClass2 = EnumWithAssociatedValue.dos("1", 5)
 
@@ -411,7 +429,7 @@ describe("AutoEquatable") {
             }
 
             context("when the enums are NOT the same") {
-                it("should return true") {
+                it("should return false") {
                     let myEnum1 = EnumWithAssociatedValue.uno("")
                     let myEnum2 = EnumWithAssociatedValue.dos("", 0)
 
