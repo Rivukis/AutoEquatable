@@ -1,3 +1,4 @@
+import Foundation
 
 // This should fatal error saying that optional should not conform to AutoEquatable
 //extension Optional: AutoEquatable {}
@@ -49,6 +50,22 @@ class MyClassWithFunction: AutoEquatable {
 
     init(myFunction: @escaping () -> Bool) {
         self.myFunction = myFunction
+    }
+}
+
+class MyClassWithNSObject: AutoEquatable {
+    class MyNSObject: NSObject {
+        let value: Int
+
+        init(value: Int) {
+            self.value = value
+        }
+    }
+
+    let myNSObject: MyNSObject
+
+    init(myNSObject: MyNSObject) {
+        self.myNSObject = myNSObject
     }
 }
 
@@ -184,6 +201,27 @@ describe("AutoEquatable") {
             let myClass2 = MyClassWithFunction(myFunction: { false })
 
             expect(myClass1 == myClass2).to(beTrue())
+        }
+    }
+
+    describe("properties that are NSObjects") {
+        context("when the properties are the same instance") {
+            it("should return true (NSObject's Equatable defaults to pointer comparison)") {
+                let sameObject = MyClassWithNSObject.MyNSObject(value: 1)
+                let myClass1 = MyClassWithNSObject(myNSObject: sameObject)
+                let myClass2 = MyClassWithNSObject(myNSObject: sameObject)
+
+                expect(myClass1 == myClass2).to(beTrue())
+            }
+        }
+
+        context("when the properties are NOT the same instance") {
+            it("should return false (NSObject's Equatable defaults to pointer comparison)") {
+                let myClass1 = MyClassWithNSObject(myNSObject: MyClassWithNSObject.MyNSObject(value: 1))
+                let myClass2 = MyClassWithNSObject(myNSObject: MyClassWithNSObject.MyNSObject(value: 1))
+
+                expect(myClass1 == myClass2).to(beFalse())
+            }
         }
     }
 

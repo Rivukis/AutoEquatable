@@ -1,3 +1,4 @@
+import Foundation
 
 // MARK: _InternalAutoEquatable
 
@@ -165,3 +166,4 @@ extension Double: AutoEquatable {}
 extension Float: AutoEquatable {}
 extension Bool: AutoEquatable {}
 extension Set: AutoEquatable {}
+extension NSObject: AutoEquatable {}
