@@ -77,10 +77,7 @@ class MyClassWithOptional: AutoEquatable {
     }
 }
 
-// This should fatal error saying that enums should not conform to AutoEquatable but instead AutoEquatableEnum
-//enum GenericEnum: AutoEquatable {
-
-enum GenericEnum: AutoEquatableEnum {
+enum GenericEnum: AutoEquatable {
     case one
     case two
 }
@@ -93,21 +90,9 @@ class MyClassWithGenericEnum: AutoEquatable {
     }
 }
 
-enum EnumWithAssociatedValue: AutoEquatableEnum {
+enum EnumWithAssociatedValue: AutoEquatable {
     case uno(String)
     case dos(String, Int)
-
-    public static func == (lhs: EnumWithAssociatedValue, rhs: EnumWithAssociatedValue) -> Bool {
-        switch (lhs, rhs) {
-        case (.uno(let a), uno(let b)):
-            return areAssociatedValuesEqual(a, b)
-        case (.dos(let a), dos(let b)):
-            return areAssociatedValuesEqual(a, b)
-
-        case (.uno, _): return false
-        case (.dos, _): return false
-        }
-    }
 }
 
 class MyClassWithEnumWithAssociatedValue: AutoEquatable {
@@ -531,16 +516,8 @@ describe("AutoEquatable") {
     describe("AutoEquatableGeneric") {
         let autoEquatableGenericFunction: (AutoEquatableGeneric) -> Void = { _ in }
 
-        context("when the instance is AutoEquatableEnum") {
-            it("should be able to pass in an AutoEquatableEnum") {
-                autoEquatableGenericFunction(GenericEnum.one)
-            }
-        }
-
-        context("when the instance is AutoEquatable") {
-            it("should be able to pass in an AutoEquatable") {
-                autoEquatableGenericFunction(MyClass(myString: "", myInt: 0))
-            }
+        it("should be able to pass in any AutoEquatable") {
+            autoEquatableGenericFunction(MyClass(myString: "", myInt: 0))
         }
     }
 }

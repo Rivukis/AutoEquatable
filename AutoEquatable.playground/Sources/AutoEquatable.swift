@@ -2,12 +2,12 @@ import Foundation
 
 // MARK: _InternalAutoEquatable
 
-public protocol _InternalAutoEquatable {
-    func _isEqual(to other: Any) -> Bool
+public protocol _DO_NOT_DIRECTLY_CONFORM_TO_InternalAutoEquatable {
+    func _DO_NOT_OVERRIDE_isEqual(to other: Any) -> Bool
 }
 
-extension _InternalAutoEquatable where Self: Equatable {
-    public func _isEqual(to other: Any) -> Bool {
+extension _DO_NOT_DIRECTLY_CONFORM_TO_InternalAutoEquatable where Self: Equatable {
+    public func _DO_NOT_OVERRIDE_isEqual(to other: Any) -> Bool {
         guard let other = other as? Self else {
             return false
         }
@@ -18,28 +18,9 @@ extension _InternalAutoEquatable where Self: Equatable {
 
 // MARK: - AutoEquatableGeneric
 
-public protocol AutoEquatableGeneric: _InternalAutoEquatable {}
+public protocol AutoEquatableGeneric: _DO_NOT_DIRECTLY_CONFORM_TO_InternalAutoEquatable {}
 
-// MARK: - AutoEquatabeEnum
-
-public protocol AutoEquatableEnum: Equatable, AutoEquatableGeneric {
-    static func areAssociatedValuesEqual(_ lhs: Any, _ rhs: Any) -> Bool
-}
-
-extension AutoEquatableEnum {
-    public static func areAssociatedValuesEqual(_ lhs: Any, _ rhs: Any) -> Bool {
-        if let lhs = lhs as? _InternalAutoEquatable, let rhs = rhs as? _InternalAutoEquatable {
-            return lhs._isEqual(to: rhs)
-        }
-
-        let lhsMirror = Mirror(reflecting: lhs)
-        let rhsMirror = Mirror(reflecting: rhs)
-
-        return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
-    }
-}
-
-// MARK: - AutoEquatabeEnum
+// MARK: - AutoEquatabe
 
 public protocol AutoEquatable: Equatable, AutoEquatableGeneric {}
 
@@ -48,12 +29,27 @@ extension AutoEquatable {
         let lhsMirror = Mirror(reflecting: lhs)
 
         if lhsMirror.displayStyle == .enum {
-            fatalError("Enums are NOT allowed to conform to AutoEquatable. <\(Self.self)> should conform to AutoEquatableEnum instead.")
+            guard areEnumsCasesEqual(lhs: lhs, rhs: rhs) else {
+                return false
+            }
         }
 
         let rhsMirror = Mirror(reflecting: rhs)
 
         return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
+    }
+
+    private static func areEnumsCasesEqual(lhs: Self, rhs: Self) -> Bool {
+        return rawEnumCase(for: lhs) == rawEnumCase(for: rhs)
+    }
+
+    private static func rawEnumCase(for enumeration: Self) -> UInt8 {
+        var enumeration = enumeration
+        guard let rawValue = Data(bytes: &enumeration, count: MemoryLayout<Self>.size).last else {
+            fatalError("Something went wrong when determining the enum case.")
+        }
+
+        return rawValue
     }
 }
 
@@ -92,8 +88,8 @@ private func areChildrenEqual(lhsMirror: Mirror, rhsMirror: Mirror) -> Bool {
 }
 
 private func isPropertyEqual(lhsProperty: Any, rhsProperty: Any) -> Bool {
-    if let lhsProperty = lhsProperty as? _InternalAutoEquatable, let rhsProperty = rhsProperty as? _InternalAutoEquatable {
-        return lhsProperty._isEqual(to: rhsProperty)
+    if let lhsProperty = lhsProperty as? _DO_NOT_DIRECTLY_CONFORM_TO_InternalAutoEquatable, let rhsProperty = rhsProperty as? _DO_NOT_DIRECTLY_CONFORM_TO_InternalAutoEquatable {
+        return lhsProperty._DO_NOT_OVERRIDE_isEqual(to: rhsProperty)
     }
 
     return isNonInternalAutoEquatableEqual(lhs: lhsProperty, rhs: rhsProperty)
