@@ -44,6 +44,27 @@ struct AStruct: Equatable {
     }
 }
 
+enum MyEnum: Equatable {
+    case one
+    case two(String)
+    case three(String, Int, Double)
+
+    public static func == (lhs: MyEnum, rhs: MyEnum) -> Bool {
+        switch (lhs, rhs) {
+        case (.one, .one):
+            return true
+        case (.two(let a), two(let b)):
+            return return a == b
+        case (.three(let a1, a2, a3), three(let b1, b2, b3)):
+            return a1 == b1 && a2 == b2 && a3 == b3
+
+        case (.one, _): return false
+        case (.two, _): return false
+        case (.three, _): return false
+        }
+    }
+}
+
 // after AutoEquatable
 
 class MyClass: AutoEquatable {
@@ -56,69 +77,16 @@ class MyClass: AutoEquatable {
     let myStruct: AStruct
 }
 
-struct AStruct: AutoEquatable {
+struct MyStruct: AutoEquatable {
     let aString: String
     let anInt: Int
     let aTuple: (Int, String)
 }
-```
 
-## Conforming to AutoEquatableEnum
-
-Enums are not allowed to conform to `AutoEquatable` and doing so will result in a fatal error. This is because enums aren't as friendly as the other object types. Instead use `AutoEquatableEnum` and use `areAssociatedValuesEqual()` to compare all associated values at once.
-
-### Enums without associated values
-
-An enum that does not have any associated value on any case conform to `Equatable` by default. Thanks Swift!
-
-In this case, simply conform to `AutoEquatableEnum`.
-
-```swift
-enum GenericEnum: AutoEquatableEnum {
+enum MyEnum: AutoEquatable {
     case one
-    case two
-}
-```
-
-### Enums with associated values
-
-Unfortunately, if at least one case has at least one associated value then you must conform to `Equatable` manually.
-
-For this to work, a little bit of boilerplate code required. Fortunately, there is a function on `AutoEquatableEnum` that can compare all the associated values at once.
-
-```swift
-// without using `default` (for compiler help so there is no way to accidentally leave out a case out of the switch statement)
-enum EnumWithAssociatedValue: AutoEquatableEnum {
-    case three(String)
-    case four(String, Int, Double)
-
-    public static func == (lhs: EnumWithAssociatedValue, rhs: EnumWithAssociatedValue) -> Bool {
-        switch (lhs, rhs) {
-        case (.three(let a), three(let b)):
-            return areAssociatedValuesEqual(a, b)
-        case (.four(let a), four(let b)):
-            return areAssociatedValuesEqual(a, b)
-
-        case (.three, _): return false
-        case (.four, _): return false
-        }
-    }
-}
-
-// using `default` (small and faster, but might forget to add a case to the switch statement)
-enum EnumWithAssociatedValue: AutoEquatableEnum {
-    case three(String)
-    case four(String, Int)
-
-    public static func == (lhs: EnumWithAssociatedValue, rhs: EnumWithAssociatedValue) -> Bool {
-        switch (lhs, rhs) {
-        case (.three(let a), three(let b)):
-            return areAssociatedValuesEqual(a, b)
-        case (.four(let a), four(let b)):
-            return areAssociatedValuesEqual(a, b)
-        default: false
-        }
-    }
+    case two(String)
+    case three(String, Int, Double)
 }
 ```
 
