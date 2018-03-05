@@ -8,11 +8,9 @@ AutoEquatable is a convenient way to conform to the Swift protocol, Equatable.
 
 The `AutoEquatable` protocol works by comparing all stored properties of an object. Can still implement a custom `==()` function and `AutoEquatable` will use that custom implementation instead of `AutoEquatable`'s default property comparison.
 
-## Conforming to AutoEquatable
+## Before AutoEquatable
 
 ```swift
-// before AutoEquatable
-
 class MyClass: Equatable {
     let myString: String
     let myInt: Int
@@ -20,7 +18,8 @@ class MyClass: Equatable {
     let myOptional: String?
     let myTuple: (String, Int)
     let myFunction: (String) -> Bool // functions are ignored when comparing objects
-    let myStruct: AStruct
+    let myStruct: MyStruct
+    let myEnum: MyEnum
 
     public static func == (lhs: MyClass, rhs: MyClass) -> Bool {
         return lhs.myString == rhs.myString
@@ -29,10 +28,11 @@ class MyClass: Equatable {
             && lhs.myOptional == rhs.myOptional
             && lhs.myTuple == rhs.myTuple
             && lhs.myStruct == rhs.myStruct
+            && lhs.myEnum == rhs.myEnum
     }
 }
 
-struct AStruct: Equatable {
+struct MyStruct: Equatable {
     let aString: String
     let anInt: Int
     let aTuple: (Int, String)
@@ -64,9 +64,11 @@ enum MyEnum: Equatable {
         }
     }
 }
+```
 
-// after AutoEquatable
+## After AutoEquatable
 
+```swift
 class MyClass: AutoEquatable {
     let myString: String
     let myInt: Int
@@ -74,7 +76,8 @@ class MyClass: AutoEquatable {
     let myOptional: String?
     let myTuple: (String, Int)
     let myFunction: (String) -> Bool // functions are ignored when comparing objects
-    let myStruct: AStruct
+    let myStruct: MyStruct
+    let myEnum: MyEnum
 }
 
 struct MyStruct: AutoEquatable {
