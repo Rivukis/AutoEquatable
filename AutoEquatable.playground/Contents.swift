@@ -315,6 +315,15 @@ describe("AutoEquatable") {
                 expect(myClassWithArray1 == myClassWithArray2).to(beFalse())
             }
         }
+
+        context("when the arrays have different count") {
+            it("should return false") {
+                let myClassWithArray1 = MyClassWithArray(myArray: [(-1, -1), (-2, -2)])
+                let myClassWithArray2 = MyClassWithArray(myArray: [(-1, -1)])
+
+                expect(myClassWithArray1 == myClassWithArray2).to(beFalse())
+            }
+        }
     }
 
     describe("properties that are dictionaries") {
@@ -331,6 +340,15 @@ describe("AutoEquatable") {
             it("should return false") {
                 let myClassWithDictionary1 = MyClassWithDictionary(myDictionary: ["one": "1", "two": "2"])
                 let myClassWithDictionary2 = MyClassWithDictionary(myDictionary: ["one": "1", "three": "3"])
+
+                expect(myClassWithDictionary1 == myClassWithDictionary2).to(beFalse())
+            }
+        }
+
+        context("when the dictionaries have different counts") {
+            it("should return false") {
+                let myClassWithDictionary1 = MyClassWithDictionary(myDictionary: ["one": "1", "two": "2"])
+                let myClassWithDictionary2 = MyClassWithDictionary(myDictionary: ["one": "1"])
 
                 expect(myClassWithDictionary1 == myClassWithDictionary2).to(beFalse())
             }
