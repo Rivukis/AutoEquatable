@@ -77,21 +77,21 @@ extension AutoEquatable where Self: Collection {
 private func areChildrenEqual(lhsMirror: Mirror, rhsMirror: Mirror) -> Bool {
     let lhsChildren = lhsMirror.children
     let rhsChildren = rhsMirror.children
-    
-    if (lhsChildren.count == rhsChildren.count) {
-        let lhsProperties = lhsMirror.children.map { $0.1 }
-        let rhsProperties = rhsMirror.children.map { $0.1 }
-        
-        for (lhsProperty, rhsProperty) in zip(lhsProperties, rhsProperties) {
-            if !isPropertyEqual(lhsProperty: lhsProperty, rhsProperty: rhsProperty) {
-                return false
-            }
-        }
-        
-        return true
-    } else {
+
+    guard lhsChildren.count == rhsChildren.count else {
         return false
     }
+
+    let lhsProperties = lhsChildren.map { $0.1 }
+    let rhsProperties = rhsChildren.map { $0.1 }
+
+    for (lhsProperty, rhsProperty) in zip(lhsProperties, rhsProperties) {
+        if !isPropertyEqual(lhsProperty: lhsProperty, rhsProperty: rhsProperty) {
+            return false
+        }
+    }
+
+    return true
 }
 
 private func isPropertyEqual(lhsProperty: Any, rhsProperty: Any) -> Bool {
