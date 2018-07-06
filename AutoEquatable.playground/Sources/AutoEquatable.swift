@@ -27,30 +27,42 @@ public protocol AutoEquatable: Equatable, AutoEquatableGeneric {}
 extension AutoEquatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         let lhsMirror = Mirror(reflecting: lhs)
+        let rhsMirror = Mirror(reflecting: rhs)
 
         if lhsMirror.displayStyle == .enum {
-            guard areEnumsCasesEqual(lhs: lhs, rhs: rhs) else {
+            // The case names should be the same
+            guard enumName(lhs) == enumName(rhs) else {
                 return false
             }
+            // All associated values should be equal
+            for (lhsChild, rhsChild) in zip(lhsMirror.children, rhsMirror.children) {
+                guard areAssociatedValuesEqual(lhsChild, rhsChild) else {
+                    return false
+                }
+            }
+            return true
         }
-
-        let rhsMirror = Mirror(reflecting: rhs)
 
         return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
     }
+}
 
-    private static func areEnumsCasesEqual(lhs: Self, rhs: Self) -> Bool {
-        return rawEnumCase(for: lhs) == rawEnumCase(for: rhs)
+private func enumName(_ value: Any) -> String {
+    let name = String(describing: value)
+    if let index = name.range(of: "(")?.lowerBound {
+        return String(name.prefix(upTo: index))
     }
+    return name
+}
 
-    private static func rawEnumCase(for enumeration: Self) -> UInt8 {
-        var enumeration = enumeration
-        guard let rawValue = Data(bytes: &enumeration, count: MemoryLayout<Self>.size).last else {
-            fatalError("Something went wrong when determining the enum case.")
-        }
-
-        return rawValue
+private func areAssociatedValuesEqual(_ lhs: Any, _ rhs: Any) -> Bool {
+    if let lhs = lhs as? _DO_NOT_DIRECTLY_CONFORM_TO_InternalAutoEquatable, let rhs = rhs as? _DO_NOT_DIRECTLY_CONFORM_TO_InternalAutoEquatable {
+        return lhs._DO_NOT_OVERRIDE_isEqual(to: rhs)
     }
+    let lhsMirror = Mirror(reflecting: lhs)
+    let rhsMirror = Mirror(reflecting: rhs)
+
+    return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
 }
 
 // MARK: OptionalType Protection

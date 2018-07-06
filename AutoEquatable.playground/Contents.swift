@@ -95,6 +95,11 @@ enum EnumWithAssociatedValue: AutoEquatable {
     case dos(String, Int)
 }
 
+enum EnumWithEnumAssociatedValue: AutoEquatable {
+    case one
+    case two(EnumWithAssociatedValue)
+}
+
 class MyClassWithEnumWithAssociatedValue: AutoEquatable {
     let myEnum: EnumWithAssociatedValue
 
@@ -436,6 +441,35 @@ describe("AutoEquatable") {
                     let myEnum1 = EnumWithAssociatedValue.uno("")
                     let myEnum2 = EnumWithAssociatedValue.dos("", 0)
 
+                    expect(myEnum1 == myEnum2).to(beFalse())
+                }
+            }
+        }
+        
+        describe("enums with enum associated values") {
+            context("when the case w/o associated values are the same") {
+                it("should return true when using convienence function") {
+                    let myEnum1 = EnumWithEnumAssociatedValue.one
+                    let myEnum2 = EnumWithEnumAssociatedValue.one
+                    
+                    expect(myEnum1 == myEnum2).to(beTrue())
+                }
+            }
+            
+            context("when the associated values are the same") {
+                it("should return true when using convienence function") {
+                    let myEnum1 = EnumWithEnumAssociatedValue.two(.uno("String"))
+                    let myEnum2 = EnumWithEnumAssociatedValue.two(.uno("String"))
+                    
+                    expect(myEnum1 == myEnum2).to(beTrue())
+                }
+            }
+
+            context("when the associated values are not the same") {
+                it("should return true when using convienence function") {
+                    let myEnum1 = EnumWithEnumAssociatedValue.two(.uno("String1"))
+                    let myEnum2 = EnumWithEnumAssociatedValue.two(.uno("String2"))
+                    
                     expect(myEnum1 == myEnum2).to(beFalse())
                 }
             }
