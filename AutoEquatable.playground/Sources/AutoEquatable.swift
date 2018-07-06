@@ -31,7 +31,7 @@ extension AutoEquatable {
 
         if lhsMirror.displayStyle == .enum {
             // The case names should be the same
-            guard enumName(lhs) == enumName(rhs) else {
+            guard enumCaseName(lhs) == enumCaseName(rhs) else {
                 return false
             }
             // All associated values should be equal
@@ -47,7 +47,7 @@ extension AutoEquatable {
     }
 }
 
-private func enumName(_ value: Any) -> String {
+private func enumCaseName(_ value: Any) -> String {
     let name = String(describing: value)
     if let index = name.range(of: "(")?.lowerBound {
         return String(name.prefix(upTo: index))
