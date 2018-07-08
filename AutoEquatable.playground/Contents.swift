@@ -466,7 +466,7 @@ describe("AutoEquatable") {
             }
 
             context("when the associated values are not the same") {
-                it("should return true when using convienence function") {
+                it("should return false when using convienence function") {
                     let myEnum1 = EnumWithEnumAssociatedValue.two(.uno("String1"))
                     let myEnum2 = EnumWithEnumAssociatedValue.two(.uno("String2"))
                     
