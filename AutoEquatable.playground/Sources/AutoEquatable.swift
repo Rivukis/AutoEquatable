@@ -30,26 +30,42 @@ extension AutoEquatable {
         let rhsMirror = Mirror(reflecting: rhs)
 
         if lhsMirror.displayStyle == .enum {
-            // The case names should be the same
-            guard enumCaseName(lhs) == enumCaseName(rhs) else {
-                return false
-            }
-
-            // All associated values should be equal
-            return areAssociatedValuesEqual(Array(lhsMirror.children), Array(rhsMirror.children))
+            return areEnumCasesEqual(lhs: lhs, rhs: rhs, lhsMirror: lhsMirror, rhsMirror: rhsMirror)
         }
 
         return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
     }
+
+    func rawData() -> UInt8 {
+        var me: Self = self
+        guard let rawValue = Data(bytes: &me, count: MemoryLayout<Self>.size).last else {
+            fatalError("Something went wrong when getting the raw bytes.")
+        }
+
+        return rawValue
+    }
 }
 
-private func enumCaseName(_ value: Any) -> String {
-    let name = String(describing: value)
-    if let index = name.range(of: "(")?.lowerBound {
-        return String(name.prefix(upTo: index))
+private func areEnumCasesEqual<T: AutoEquatable>(lhs: T, rhs: T, lhsMirror: Mirror, rhsMirror: Mirror) -> Bool {
+    // Make sure that both enums have or don't have associated values
+    guard lhsMirror.children.isEmpty == rhsMirror.children.isEmpty else {
+        return false
     }
 
-    return name
+    /*
+     If an enum has NO children than it has no associated values
+     therefore the data representations will represent the enum case
+     */
+    if lhsMirror.children.isEmpty {
+        return lhs.rawData() == rhs.rawData()
+    }
+
+    // If an enum HAS children than the case name is the used as the label to associated values
+    guard let lhsCaseName = lhsMirror.children.first?.label, let rhsCaseName = rhsMirror.children.first?.label else {
+        fatalError("Swift is not laying out an enum in the expected way in Mirror")
+    }
+
+    return lhsCaseName == rhsCaseName && areAssociatedValuesEqual(Array(lhsMirror.children), Array(rhsMirror.children))
 }
 
 private func areAssociatedValuesEqual(_ lhs: Any, _ rhs: Any) -> Bool {
