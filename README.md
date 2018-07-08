@@ -1,4 +1,5 @@
-**WARNING**
+## WARNING
+
 Version 2.2 is experimental. There were previous approaches using a similar approach that proved to not work on some machines / Swift versions. This new approach should be resilient to different Swift versions in how it lays out bytes. However, this version is reliant on how Swift treats enums (with and without associated values) in a Mirror.
 
 If you are having issues please let me know and in the mean time use version 2.1 which relies on description to get the enum case name or version 1.4 which uses a manual approach to dealing with enum equality.
