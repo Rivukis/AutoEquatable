@@ -34,13 +34,9 @@ extension AutoEquatable {
             guard enumCaseName(lhs) == enumCaseName(rhs) else {
                 return false
             }
+
             // All associated values should be equal
-            for (lhsChild, rhsChild) in zip(lhsMirror.children, rhsMirror.children) {
-                guard areAssociatedValuesEqual(lhsChild, rhsChild) else {
-                    return false
-                }
-            }
-            return true
+            return areAssociatedValuesEqual(Array(lhsMirror.children), Array(rhsMirror.children))
         }
 
         return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
@@ -52,6 +48,7 @@ private func enumCaseName(_ value: Any) -> String {
     if let index = name.range(of: "(")?.lowerBound {
         return String(name.prefix(upTo: index))
     }
+
     return name
 }
 
