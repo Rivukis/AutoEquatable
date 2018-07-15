@@ -109,8 +109,8 @@ To see and run the tests for `AutoEquatable`. Download the playground and run it
 
 ## Requirements
 
-* Xcode 8
-* Swift 3
+* Xcode 8 and above
+* Swift 3 and above
 
 ## Installation
 
