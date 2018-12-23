@@ -341,6 +341,15 @@ describe("AutoEquatable") {
             }
         }
 
+        context("when the dictionaries are equal but created with key-value pairs in a different order") {
+            it("should return true") {
+                let myClassWithDictionary1 = MyClassWithDictionary(myDictionary: ["one": "1", "two": "2"])
+                let myClassWithDictionary2 = MyClassWithDictionary(myDictionary: ["two": "2", "one": "1"])
+
+                expect(myClassWithDictionary1 == myClassWithDictionary2).to(beTrue())
+            }
+        }
+
         context("when the dictionaries are NOT equal") {
             it("should return false") {
                 let myClassWithDictionary1 = MyClassWithDictionary(myDictionary: ["one": "1", "two": "2"])
