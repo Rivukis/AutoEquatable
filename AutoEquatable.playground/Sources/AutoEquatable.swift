@@ -153,7 +153,7 @@ private func isNonInternalAutoEquatableEqual(lhs: Any, rhs: Any) -> Bool {
     // Dictionary Check
 
     if lhsMirror.displayStyle == .dictionary && rhsMirror.displayStyle == .dictionary {
-        return areChildrenEqual(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
+        return manualDictionaryEquality(lhsMirror: lhsMirror, rhsMirror: rhsMirror)
     }
 
     // Optional Check
@@ -184,6 +184,46 @@ private func typeNameWithOutGenerics<T>(_: T.Type) -> String {
     }
 
     return type
+}
+
+private func manualDictionaryEquality(lhsMirror: Mirror, rhsMirror: Mirror) -> Bool {
+    let lhsDictionary = convertMirrorOfDictionaryToDictionary(mirror: lhsMirror)
+    let rhsDictionary = convertMirrorOfDictionaryToDictionary(mirror: rhsMirror)
+
+    let lhsKeySet = Set<AnyHashable>(lhsDictionary.keys)
+    let rhsKeySet = Set<AnyHashable>(rhsDictionary.keys)
+
+    guard lhsKeySet == rhsKeySet else {
+        return false
+    }
+
+    for lhsKey in lhsDictionary.keys {
+        guard let lhsValue = lhsDictionary[lhsKey], let rhsValue = rhsDictionary[lhsKey] else {
+            // key doesn't not exist in both dictionaries
+            return false
+        }
+
+        guard isPropertyEqual(lhsProperty: lhsValue, rhsProperty: rhsValue) else {
+            // values for the same key are not equal
+            return false
+        }
+    }
+
+    return true
+}
+
+private func convertMirrorOfDictionaryToDictionary(mirror: Mirror) -> [AnyHashable: Any] {
+    var dictionary: [AnyHashable: Any] = [:]
+
+    for child in mirror.children {
+        if let pair = child.value as? (key: AnyHashable, value: Any) {
+            dictionary[pair.key] = pair.value
+        } else {
+            fatalError("Unable to reconstruct dictionary from a Mirror with a `displatyStyle` of `.dictionary`")
+        }
+    }
+
+    return dictionary
 }
 
 // MARK: Common Types Conforming to AutoEquatable
