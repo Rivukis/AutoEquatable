@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'AutoEquatable'
-  s.version          = '2.2'
+  s.version          = '2.3'
   s.summary          = 'Convenient protocol that allows all types to easily and safely conform to Equatable.'
 
   s.description      = <<-DESC
